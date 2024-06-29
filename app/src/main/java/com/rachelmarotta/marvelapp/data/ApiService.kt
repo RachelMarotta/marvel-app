@@ -5,10 +5,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiService {
 
-    private fun retrofit() = Retrofit.Builder()
-        .baseUrl("developer.marvel.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private const val BASE_URL = "https://gateway.marvel.com/"
 
-    fun <T> buildService(service:Class<T>) : T = retrofit().create(service)
+    val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 }

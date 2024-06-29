@@ -1,47 +1,60 @@
 package com.rachelmarotta.marvelapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.rachelmarotta.marvelapp.ui.theme.MarvelAppTheme
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.rachelmarotta.marvelapp.data.ApiService
+import com.rachelmarotta.marvelapp.data.MarvelService
+import com.rachelmarotta.marvelapp.data.utils.generateMd5Hash
+import com.rachelmarotta.marvelapp.model.Characters
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private val TAG = "MainActivity"
+
+    private val publicKey = BuildConfig.MARVEL_PUBLIC_KEY
+    private val privateKey = BuildConfig.MARVEL_PRIVATE_KEY
+    private val ts = System.currentTimeMillis().toString()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MarvelAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+        setContentView(R.layout.activity_main)
+
+        Log.i(TAG, "onCreate: MainActivity is created")
+
+        val limit = 20
+        val offset = 0
+
+        Log.i(TAG, "onCreate: Timestamp generated: $ts")
+        Log.i(TAG, "onCreate: PrivateKey in BuildConfig: $privateKey")
+        Log.i(TAG, "onCreate: PublicKey in BuildConfig: $publicKey")
+
+        val hash = generateMd5Hash("$ts$privateKey$publicKey")
+
+        Log.i(TAG, "onCreate: Hash generated: $hash")
+
+        val apiService = ApiService.retrofit.create(MarvelService::class.java)
+        val call = apiService.getCharacters(ts, publicKey, hash, limit, offset)
+
+        call.enqueue(object : Callback<Characters> {
+            override fun onResponse(call: Call<Characters>, response: Response<Characters>) {
+                Log.i(TAG, response.toString())
+                if (response.isSuccessful) {
+                    val marvelResponse = response.body()
+                    Log.i(TAG, response.toString())
+                } else {
+                    // Handle the case where the response is not successful
+                    Log.e(TAG, "Response was not successful")
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MarvelAppTheme {
-        Greeting("Android")
+            override fun onFailure(call: Call<Characters>, t: Throwable) {
+                // Tratar falha
+                Log.e("API Error", t.message.toString())
+            }
+        })
     }
 }
