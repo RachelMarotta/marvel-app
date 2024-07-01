@@ -3,6 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -99,4 +101,5 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.androidx.recyclerview)
     implementation(libs.glide)
+    ksp(libs.glide.ksp)
 }

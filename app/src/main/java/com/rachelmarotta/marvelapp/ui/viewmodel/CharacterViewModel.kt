@@ -16,17 +16,20 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: Boolean get() = _isLoading.value ?: false
+
     private var currentOffset = 0
     private val limit = 20
-    private var isLoading = false
 
     init {
         fetchCharacters()
     }
 
     fun fetchCharacters() {
-        if (isLoading) return
-        isLoading = true
+        if (_isLoading.value == true) return
+
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val result = getCharactersUseCase(limit, currentOffset)
@@ -36,7 +39,7 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
             } catch (e: Exception) {
                 _error.postValue(e.message)
             }
-            isLoading = false
+            _isLoading.postValue(false)
         }
     }
 }

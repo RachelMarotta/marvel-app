@@ -8,5 +8,6 @@ fun Result.toDomain(): Character {
         name = this.name,
         description = this.description,
         thumbnailUrl = "${this.thumbnail.path}.${this.thumbnail.extension}"
+            .replace("http", "https")
     )
 }

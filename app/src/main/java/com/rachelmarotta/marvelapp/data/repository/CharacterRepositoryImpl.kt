@@ -19,7 +19,7 @@ class CharacterRepositoryImpl(private val apiService: MarvelService) : Character
         return if (response.isSuccessful) {
             response.body()?.data?.results?.map { it.toDomain() } ?: emptyList()
         } else {
-            emptyList()
+            throw Exception("Error fetching characters")
         }
     }
 }

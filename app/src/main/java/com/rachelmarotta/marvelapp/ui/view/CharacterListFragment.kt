@@ -35,7 +35,7 @@ class CharacterListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,8 +46,8 @@ class CharacterListFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
 
-        viewModel.characters.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.characters.observe(viewLifecycleOwner) { characters ->
+            adapter.submitList(characters, viewModel.isLoading)
         }
 
         viewModel.error.observe(viewLifecycleOwner) {

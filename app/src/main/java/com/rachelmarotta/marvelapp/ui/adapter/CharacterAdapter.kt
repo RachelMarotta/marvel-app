@@ -2,42 +2,62 @@ package com.rachelmarotta.marvelapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rachelmarotta.marvelapp.databinding.ItemCharacterBinding
+import com.rachelmarotta.marvelapp.databinding.ItemLoadingBinding
 import com.rachelmarotta.marvelapp.domain.model.Character
 
-class CharacterAdapter :
-    ListAdapter<Character, CharacterAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
+class CharacterAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
-        val binding =
-            ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CharacterViewHolder(binding)
+    private val VIEW_TYPE_CHARACTER = 0
+    private val VIEW_TYPE_LOADING = 1
+
+    private val items = mutableListOf<Any>()
+
+    fun submitList(characters: List<Character>, isLoading: Boolean) {
+        items.clear()
+        items.addAll(characters)
+        if (isLoading) {
+            items.add(Any()) // Add a loading item
+        }
+        notifyDataSetChanged()
     }
 
-    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun getItemViewType(position: Int): Int {
+        return if (items[position] is Character) VIEW_TYPE_CHARACTER else VIEW_TYPE_LOADING
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_CHARACTER) {
+            val binding =
+                ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            CharacterViewHolder(binding)
+        } else {
+            val binding =
+                ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            LoadingViewHolder(binding)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is CharacterViewHolder) {
+            val character = items[position] as Character
+            holder.bind(character)
+        }
+    }
+
+    override fun getItemCount(): Int = items.size
 
     class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(character: Character) {
             binding.textViewName.text = character.name
-            Glide.with(binding.imageViewThumbnail.context).load(character.thumbnailUrl)
+            Glide.with(binding.imageViewThumbnail.context)
+                .load(character.thumbnailUrl)
                 .into(binding.imageViewThumbnail)
         }
     }
 
-    class CharacterDiffCallback : DiffUtil.ItemCallback<Character>() {
-        override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean {
-            return oldItem == newItem
-        }
-    }
+    class LoadingViewHolder(binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root)
 }
