@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rachelmarotta.marvelapp.data.remote.ApiService
 import com.rachelmarotta.marvelapp.data.remote.MarvelService
 import com.rachelmarotta.marvelapp.data.repository.CharacterRepositoryImpl
@@ -34,7 +35,7 @@ class CharacterListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -53,7 +54,15 @@ class CharacterListFragment : Fragment() {
             // Handle error
         }
 
-        viewModel.fetchCharacters(20, 0)
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1) {
+                    viewModel.fetchCharacters()
+                }
+            }
+        })
     }
 
     override fun onDestroyView() {

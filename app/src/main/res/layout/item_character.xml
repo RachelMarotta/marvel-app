@@ -10,8 +10,8 @@
         android:id="@+id/imageViewThumbnail"
         android:layout_width="@dimen/photo_size"
         android:layout_height="@dimen/photo_size"
-        android:layout_gravity="left"
-        android:layout_marginEnd="@dimen/dimen_8"
+        android:layout_gravity="start"
+        android:layout_marginEnd="@dimen/dimen_16"
         android:contentDescription="@string/icon_character" />
 
     <TextView
