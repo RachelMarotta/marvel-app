@@ -1,18 +1,17 @@
-package com.rachelmarotta.marvelapp.data
+package com.rachelmarotta.marvelapp.data.remote
 
-import com.rachelmarotta.marvelapp.model.Characters
-import retrofit2.Call
+import com.rachelmarotta.marvelapp.data.model.CharactersResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MarvelService {
-
-    @GET("v1/public/characters")
-    fun getCharacters(
+    @GET("/v1/public/characters")
+    suspend fun getCharacters(
         @Query("ts") timestamp: String,
         @Query("apikey") publicKey: String,
         @Query("hash") hash: String,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
-    ): Call<Characters>
+    ): Response<CharactersResponse>
 }

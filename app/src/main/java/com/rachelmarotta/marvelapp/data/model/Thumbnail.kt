@@ -1,4 +1,4 @@
-package com.rachelmarotta.marvelapp.model
+package com.rachelmarotta.marvelapp.data.model
 
 data class Thumbnail(
     val extension: String,

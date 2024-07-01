@@ -1,6 +1,6 @@
-package com.rachelmarotta.marvelapp.model
+package com.rachelmarotta.marvelapp.data.model
 
-data class Events(
+data class Series(
     val available: Int,
     val collectionURI: String,
     val items: List<Item>,

@@ -1,4 +1,4 @@
-package com.rachelmarotta.marvelapp.model
+package com.rachelmarotta.marvelapp.data.model
 
 data class Data(
     val count: Int,

@@ -1,4 +1,4 @@
-package com.rachelmarotta.marvelapp.data.utils
+package com.rachelmarotta.marvelapp.data.remote.utils
 
 import java.security.MessageDigest
 
