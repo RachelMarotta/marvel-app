@@ -14,9 +14,10 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
     val characters: LiveData<List<Character>> get() = _characters
 
     private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    fun isLoading(): Boolean = _isLoading.value ?: false
 
     fun fetchCharacters(offset: Int, limit: Int) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val newCharacters = getCharactersUseCase.invoke(offset, limit)
@@ -24,6 +25,8 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
                 _characters.value = updatedCharacters
             } catch (e: Exception) {
                 // Handle the error
+            } finally {
+                _isLoading.value = false
             }
         }
     }

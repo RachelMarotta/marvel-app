@@ -63,7 +63,7 @@ class CharacterListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                if (layoutManager.findLastVisibleItemPosition() == adapter.itemCount - 1) {
+                if (layoutManager.findLastVisibleItemPosition() == adapter.itemCount - 1 && !viewModel.isLoading()) {
                     fetchCharacters()
                 }
             }
@@ -72,13 +72,14 @@ class CharacterListFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.characters.observe(viewLifecycleOwner, Observer { characters ->
-            adapter.submitList(characters, false)
+            adapter.submitList(characters, viewModel.isLoading())
         })
     }
 
     private fun fetchCharacters() {
         viewModel.fetchCharacters(offset, limit)
         offset += limit
+        adapter.addLoadingFooter()
     }
 
     override fun onDestroyView() {
