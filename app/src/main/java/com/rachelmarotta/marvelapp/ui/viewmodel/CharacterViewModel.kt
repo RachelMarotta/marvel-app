@@ -31,6 +31,20 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
         }
     }
 
+    fun searchCharactersByName(name: String) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val characters = getCharactersUseCase.searchByName(name)
+                _characters.value = characters
+            } catch (e: Exception) {
+                // Handle the error
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     fun toggleFavorite(character: Character) {
         val updatedCharacters = _characters.value?.map {
             if (it.id == character.id) it.copy(isFavorite = !it.isFavorite) else it

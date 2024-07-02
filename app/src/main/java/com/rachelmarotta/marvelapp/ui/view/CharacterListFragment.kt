@@ -51,6 +51,7 @@ class CharacterListFragment : Fragment() {
 
         setupRecyclerView()
         observeViewModel()
+        setupSearchButton()
         fetchCharacters()
     }
 
@@ -74,6 +75,15 @@ class CharacterListFragment : Fragment() {
         viewModel.characters.observe(viewLifecycleOwner, Observer { characters ->
             adapter.submitList(characters, viewModel.isLoading())
         })
+    }
+
+    private fun setupSearchButton() {
+        binding.searchButton.setOnClickListener {
+            val query = binding.searchView.query.toString()
+            if (query.isNotEmpty()) {
+                viewModel.searchCharactersByName(query)
+            }
+        }
     }
 
     private fun fetchCharacters() {

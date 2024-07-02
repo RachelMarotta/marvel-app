@@ -14,4 +14,13 @@ interface MarvelService {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): Response<CharactersResponse>
+
+    @GET("v1/public/characters")
+    suspend fun searchCharactersByName(
+        @Query("ts") timestamp: String,
+        @Query("apikey") publicKey: String,
+        @Query("hash") hash: String,
+        @Query("nameStartsWith") name: String
+    ): Response<CharactersResponse>
 }
+

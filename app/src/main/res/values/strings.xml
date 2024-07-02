@@ -2,4 +2,5 @@
     <string name="app_name">Marvel App</string>
     <string name="icon_character">Ícone do personagem</string>
     <string name="favorite_description">Botão favorito</string>
+    <string name="search">Search</string>
 </resources>

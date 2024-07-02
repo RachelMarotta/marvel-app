@@ -7,4 +7,8 @@ class GetCharactersUseCase(private val characterRepository: CharacterRepository)
     suspend fun invoke(offset: Int, limit: Int): List<Character> {
         return characterRepository.getCharacters(offset, limit)
     }
+
+    suspend fun searchByName(name: String): List<Character> {
+        return characterRepository.searchCharactersByName(name)
+    }
 }
