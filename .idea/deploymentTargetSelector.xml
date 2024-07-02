@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="marvel_app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-06-30T21:09:58.243871120Z">
+        <DropdownSelection timestamp="2024-07-02T13:51:29.096025770Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/rachel/.android/avd/Nexus_S_API_28.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/rachel/.android/avd/Pixel_4_XL_API_28.avd" />
             </handle>
           </Target>
         </DropdownSelection>

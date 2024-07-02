@@ -5,59 +5,65 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rachelmarotta.marvelapp.databinding.ItemCharacterBinding
-import com.rachelmarotta.marvelapp.databinding.ItemLoadingBinding
 import com.rachelmarotta.marvelapp.domain.model.Character
 
-class CharacterAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CharacterAdapter(private val onFavoriteClick: (Character) -> Unit) :
+    RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder>() {
 
     private val VIEW_TYPE_CHARACTER = 0
     private val VIEW_TYPE_LOADING = 1
 
-    private val items = mutableListOf<Any>()
+    private val characters = mutableListOf<Character?>()
 
-    fun submitList(characters: List<Character>, isLoading: Boolean) {
-        items.clear()
-        items.addAll(characters)
-        if (isLoading) {
-            items.add(Any()) // Add a loading item
-        }
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemCharacterBinding.inflate(inflater, parent, false)
+        return CharacterViewHolder(binding)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (items[position] is Character) VIEW_TYPE_CHARACTER else VIEW_TYPE_LOADING
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_CHARACTER) {
-            val binding =
-                ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            CharacterViewHolder(binding)
-        } else {
-            val binding =
-                ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            LoadingViewHolder(binding)
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is CharacterViewHolder) {
-            val character = items[position] as Character
+    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
+        val character = characters[position]
+        if (character != null) {
             holder.bind(character)
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = characters.size
 
-    class CharacterViewHolder(private val binding: ItemCharacterBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(character: Character) {
-            binding.textViewName.text = character.name
-            Glide.with(binding.imageViewThumbnail.context)
-                .load(character.thumbnailUrl)
-                .into(binding.imageViewThumbnail)
+    override fun getItemViewType(position: Int): Int {
+        return if (characters[position] == null) VIEW_TYPE_LOADING else VIEW_TYPE_CHARACTER
+    }
+
+    fun submitList(newCharacters: List<Character>, isLoading: Boolean) {
+        val currentSize = characters.size
+        if (isLoading) {
+            characters.add(null) // Adiciona um item null para o indicador de carregamento
+            notifyItemInserted(currentSize)
+        } else {
+            if (currentSize > 0 && characters[currentSize - 1] == null) {
+                characters.removeAt(currentSize - 1) // Remove o item de carregamento
+                notifyItemRemoved(currentSize - 1)
+            }
+            val newSize = characters.size + newCharacters.size
+            characters.addAll(newCharacters)
+            notifyItemRangeInserted(currentSize, newSize)
         }
     }
 
-    class LoadingViewHolder(binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class CharacterViewHolder(private val binding: ItemCharacterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(character: Character) {
+            binding.textViewName.text = character.name
+            Glide.with(binding.textViewName.context)
+                .load(character.thumbnailUrl)
+                .into(binding.imageViewThumbnail)
+
+            binding.btnFavorite.setOnClickListener {
+                onFavoriteClick(character)
+            }
+        }
+    }
+
+//    inner class LoadingViewHolder(binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root)
 }

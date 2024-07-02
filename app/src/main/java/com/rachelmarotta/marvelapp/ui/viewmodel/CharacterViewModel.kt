@@ -10,36 +10,28 @@ import kotlinx.coroutines.launch
 
 class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase) : ViewModel() {
 
-    private val _characters = MutableLiveData<List<Character>>()
+    private val _characters = MutableLiveData<List<Character>>().apply { value = emptyList() }
     val characters: LiveData<List<Character>> get() = _characters
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
-
     private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: Boolean get() = _isLoading.value ?: false
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private var currentOffset = 0
-    private val limit = 20
-
-    init {
-        fetchCharacters()
-    }
-
-    fun fetchCharacters() {
-        if (_isLoading.value == true) return
-
-        _isLoading.value = true
+    fun fetchCharacters(offset: Int, limit: Int) {
         viewModelScope.launch {
             try {
-                val result = getCharactersUseCase(limit, currentOffset)
-                val updatedCharacters = _characters.value.orEmpty() + result
-                _characters.postValue(updatedCharacters)
-                currentOffset += limit
+                val newCharacters = getCharactersUseCase.invoke(offset, limit)
+                val updatedCharacters = _characters.value.orEmpty() + newCharacters
+                _characters.value = updatedCharacters
             } catch (e: Exception) {
-                _error.postValue(e.message)
+                // Handle the error
             }
-            _isLoading.postValue(false)
         }
+    }
+
+    fun toggleFavorite(character: Character) {
+        val updatedCharacters = _characters.value?.map {
+            if (it.id == character.id) it.copy(isFavorite = !it.isFavorite) else it
+        }
+        _characters.value = updatedCharacters
     }
 }
