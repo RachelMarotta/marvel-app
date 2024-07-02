@@ -55,7 +55,7 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CharacterAdapter { character -> /* Handle favorite click */ }
+        adapter = CharacterAdapter(viewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
