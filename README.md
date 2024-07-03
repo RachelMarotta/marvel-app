@@ -56,7 +56,38 @@ O projeto segue a arquitetura MVVM e Clean Architecture, com as seguintes princi
 - Busca por Nome: Permite buscar personagens pelo nome utilizando um campo de busca.
 - Favoritar Personagens: Permite favoritar personagens.
 - Paginação: Carrega mais personagens à medida que o usuário rola a lista.
-- Executando o Projeto
+
+## Executando o Projeto
 - Certifique-se de que todas as dependências foram instaladas e o projeto foi sincronizado corretamente.
 - Conecte um dispositivo Android ou inicie um emulador.
 - Clique no botão "Run" no Android Studio para compilar e executar o aplicativo.
+
+## Requisitos
+
+### Home - Characters
+- [x] Listagem dos personagens.
+
+- [x] Botão para favoritar nas células.
+
+- [x] Barra de busca para filtrar lista de personagens por nome.
+
+- [x] Interface de lista vazia, erro ou sem internet.
+
+### Detalhes do personagem
+- [ ] Botão de favorito.
+
+- [ ] Botão para compartilhar a imagem do personagem.
+
+- [ ] Foto em tamanho maior
+
+- [ ] Descrição (se houver).
+
+## Favoritos
+- [ ] Listagem dos personagens favoritados pelo usuário.
+
+- [ ] Interface de lista vazia, erro ou sem internet.
+
+## Testes
+- [ ] Testes de interface.
+
+- [ ] Testes unitários.
