@@ -38,7 +38,8 @@ class CharacterRepositoryImpl(private val marvelService: MarvelService) : Charac
                     id = it.id,
                     name = it.name,
                     description = it.description,
-                    thumbnailUrl = "${it.thumbnail.path}.${it.thumbnail.extension}",
+                    thumbnailUrl = "${it.thumbnail.path}.${it.thumbnail.extension}"
+                        .replace("http", "https"),
                     isFavorite = false
                 )
             } ?: emptyList()

@@ -3,4 +3,6 @@
     <string name="icon_character">Ícone do personagem</string>
     <string name="favorite_description">Botão favorito</string>
     <string name="search">Search</string>
+    <string name="btn_search">Pesquisar</string>
+    <string name="full_list">Lista completa</string>
 </resources>

@@ -52,6 +52,7 @@ class CharacterListFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
         setupSearchButton()
+        setupFullListButton()
         fetchCharacters()
     }
 
@@ -64,7 +65,10 @@ class CharacterListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                if (layoutManager.findLastVisibleItemPosition() == adapter.itemCount - 1 && !viewModel.isLoading()) {
+                if (layoutManager.findLastVisibleItemPosition() == adapter.itemCount - 1
+                    && !viewModel.isLoading()
+                    && binding.fullListButton.visibility == View.GONE
+                ) {
                     fetchCharacters()
                 }
             }
@@ -82,14 +86,26 @@ class CharacterListFragment : Fragment() {
             val query = binding.searchView.query.toString()
             if (query.isNotEmpty()) {
                 viewModel.searchCharactersByName(query)
+                binding.fullListButton.visibility = View.VISIBLE
             }
         }
     }
 
+    private fun setupFullListButton() {
+        binding.fullListButton.setOnClickListener {
+            offset = 0 // init list
+            viewModel.fetchCharacters(offset, limit, restart = true)
+            viewModel.showAllCharacters()
+            binding.fullListButton.visibility = View.GONE
+            binding.searchView.setQuery("", false) // Limpa o campo de busca
+        }
+    }
+
     private fun fetchCharacters() {
+        adapter.addLoadingFooter()
         viewModel.fetchCharacters(offset, limit)
         offset += limit
-        adapter.addLoadingFooter()
+        adapter.removeLoadingFooter()
     }
 
     override fun onDestroyView() {

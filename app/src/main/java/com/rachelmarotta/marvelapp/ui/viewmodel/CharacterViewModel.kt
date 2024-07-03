@@ -1,5 +1,6 @@
 package com.rachelmarotta.marvelapp.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,18 +14,23 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
     private val _characters = MutableLiveData<List<Character>>().apply { value = emptyList() }
     val characters: LiveData<List<Character>> get() = _characters
 
+    private val _allCharacters = MutableLiveData<List<Character>>().apply { value = emptyList() }
+    val allCharacters: LiveData<List<Character>> get() = _allCharacters
+
     private val _isLoading = MutableLiveData<Boolean>()
     fun isLoading(): Boolean = _isLoading.value ?: false
 
-    fun fetchCharacters(offset: Int, limit: Int) {
+    fun fetchCharacters(offset: Int, limit: Int, restart: Boolean = false) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
                 val newCharacters = getCharactersUseCase.invoke(offset, limit)
-                val updatedCharacters = _characters.value.orEmpty() + newCharacters
+                val updatedCharacters = if (restart) newCharacters else _characters.value.orEmpty() + newCharacters
                 _characters.value = updatedCharacters
+                _allCharacters.value = updatedCharacters
             } catch (e: Exception) {
-                // Handle the error
+                Log.e("CharacterViewModel.fetchCharacters", "Exception fetching characters", e)
+                throw e
             } finally {
                 _isLoading.value = false
             }
@@ -33,16 +39,23 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
 
     fun searchCharactersByName(name: String) {
         _isLoading.value = true
+        _characters.value = emptyList()
         viewModelScope.launch {
             try {
                 val characters = getCharactersUseCase.searchByName(name)
                 _characters.value = characters
             } catch (e: Exception) {
-                // Handle the error
+                Log.e("CharacterViewModel.searchCharactersByName", "Exception fetching characters", e)
+                throw e
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun showAllCharacters() {
+        _characters.value = emptyList()
+        _characters.value = _allCharacters.value
     }
 
     fun toggleFavorite(character: Character) {
