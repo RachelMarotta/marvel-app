@@ -1,6 +1,11 @@
 # Projeto Marvel App
 
-Este é um aplicativo Android que lista os personagens da Marvel utilizando a API da Marvel. Ele implementa a arquitetura MVVM e Clean Architecture, utilizando Kotlin e algumas bibliotecas populares do Android como Retrofit, Glide, e LiveData.
+Marvel App é um aplicativo para Android que consome a API da Marvel.
+Com arquitetura MVVM e Clean Architecture, utilizando Kotlin e algumas bibliotecas populares do Android como Retrofit, Glide, e LiveData.
+
+##Demonstração do Projeto
+
+![Demonstração do Projeto](./assests/marvelApp.gif)
 
 ## Pré-requisitos
 
