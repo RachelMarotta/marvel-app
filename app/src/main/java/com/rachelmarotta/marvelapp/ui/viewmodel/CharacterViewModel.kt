@@ -20,14 +20,19 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
     private val _isLoading = MutableLiveData<Boolean>()
     fun isLoading(): Boolean = _isLoading.value ?: false
 
+    private val _isEmpty = MutableLiveData<Boolean>()
+    val isEmpty: LiveData<Boolean> get() = _isEmpty
+
     fun fetchCharacters(offset: Int, limit: Int, restart: Boolean = false) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
                 val newCharacters = getCharactersUseCase.invoke(offset, limit)
-                val updatedCharacters = if (restart) newCharacters else _characters.value.orEmpty() + newCharacters
+                val updatedCharacters =
+                    if (restart) newCharacters else _characters.value.orEmpty() + newCharacters
                 _characters.value = updatedCharacters
                 _allCharacters.value = updatedCharacters
+                _isEmpty.value = updatedCharacters.isEmpty()
             } catch (e: Exception) {
                 Log.e("CharacterViewModel.fetchCharacters", "Exception fetching characters", e)
                 throw e
@@ -39,13 +44,17 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
 
     fun searchCharactersByName(name: String) {
         _isLoading.value = true
-        _characters.value = emptyList()
         viewModelScope.launch {
             try {
                 val characters = getCharactersUseCase.searchByName(name)
                 _characters.value = characters
+                _isEmpty.value = characters.isEmpty()
             } catch (e: Exception) {
-                Log.e("CharacterViewModel.searchCharactersByName", "Exception fetching characters", e)
+                Log.e(
+                    "CharacterViewModel.searchCharactersByName",
+                    "Exception fetching characters",
+                    e
+                )
                 throw e
             } finally {
                 _isLoading.value = false
@@ -54,8 +63,8 @@ class CharacterViewModel(private val getCharactersUseCase: GetCharactersUseCase)
     }
 
     fun showAllCharacters() {
-        _characters.value = emptyList()
         _characters.value = _allCharacters.value
+        _isEmpty.value = _allCharacters.value.isNullOrEmpty()
     }
 
     fun toggleFavorite(character: Character) {

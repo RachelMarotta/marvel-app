@@ -79,6 +79,10 @@ class CharacterListFragment : Fragment() {
         viewModel.characters.observe(viewLifecycleOwner, Observer { characters ->
             adapter.submitList(characters, viewModel.isLoading())
         })
+
+        viewModel.isEmpty.observe(viewLifecycleOwner, Observer { isEmpty ->
+            binding.emptyMessage.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        })
     }
 
     private fun setupSearchButton() {
@@ -97,7 +101,7 @@ class CharacterListFragment : Fragment() {
             viewModel.fetchCharacters(offset, limit, restart = true)
             viewModel.showAllCharacters()
             binding.fullListButton.visibility = View.GONE
-            binding.searchView.setQuery("", false) // Limpa o campo de busca
+            binding.searchView.setQuery("", false)  // Limpa o campo de busca
         }
     }
 
@@ -105,7 +109,6 @@ class CharacterListFragment : Fragment() {
         adapter.addLoadingFooter()
         viewModel.fetchCharacters(offset, limit)
         offset += limit
-        adapter.removeLoadingFooter()
     }
 
     override fun onDestroyView() {

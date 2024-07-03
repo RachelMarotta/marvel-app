@@ -5,4 +5,5 @@
     <string name="search">Search</string>
     <string name="btn_search">Pesquisar</string>
     <string name="full_list">Lista completa</string>
+    <string name="empty_list">Nenhum personagem encontrado</string>
 </resources>

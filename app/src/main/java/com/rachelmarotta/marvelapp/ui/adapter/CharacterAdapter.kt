@@ -28,10 +28,12 @@ class CharacterAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ITEM_TYPE_CHARACTER) {
-            val binding = ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding =
+                ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             CharacterViewHolder(binding, viewModel)
         } else {
-            val binding = ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding =
+                ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             LoadingViewHolder(binding)
         }
     }
@@ -48,7 +50,9 @@ class CharacterAdapter(
         characters.clear()
         characters.addAll(newCharacters)
         if (isLoading) {
-            characters.add(null)
+            addLoadingFooter()
+        } else {
+            removeLoadingFooter()
         }
         notifyDataSetChanged()
     }
@@ -65,7 +69,7 @@ class CharacterAdapter(
         if (isLoadingAdded) {
             isLoadingAdded = false
             val position = characters.size - 1
-            if (position >= 0) {
+            if (position >= 0 && characters[position] == null) {
                 characters.removeAt(position)
                 notifyItemRemoved(position)
             }
@@ -92,5 +96,6 @@ class CharacterAdapter(
         }
     }
 
-    inner class LoadingViewHolder(binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class LoadingViewHolder(binding: ItemLoadingBinding) :
+        RecyclerView.ViewHolder(binding.root)
 }
